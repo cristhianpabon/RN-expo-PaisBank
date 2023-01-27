@@ -1,0 +1,182 @@
+{
+	"info": {
+		"_postman_id": "b3ab8808-a722-4c13-b42c-4f44f9521ec2",
+		"name": "Paisbank",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"name\": \"cristhian\",\n   \"email\": \"cristhianpabon89@gmail.com\"\n}"
+				},
+				"url": {
+					"raw": "https://4okhml2r8f.execute-api.us-east-1.amazonaws.com/dev/auth/create",
+					"protocol": "https",
+					"host": [
+						"4okhml2r8f",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"auth",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "x-api-key",
+						"value": "0mlVFqc_+gbw6BfqHhzZsaI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"soypaisanx@paisanos.io\",\n    \"password\": \"PAISANX2023!$\"\n}"
+				},
+				"url": {
+					"raw": "https://4okhml2r8f.execute-api.us-east-1.amazonaws.com/dev/paisabank/login",
+					"protocol": "https",
+					"host": [
+						"4okhml2r8f",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"paisabank",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contacts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "0mlVFqc_+gbw6BfqHhzZsaI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://4okhml2r8f.execute-api.us-east-1.amazonaws.com/dev/paisabank/contacts",
+					"protocol": "https",
+					"host": [
+						"4okhml2r8f",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"paisabank",
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cards",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "0mlVFqc_+gbw6BfqHhzZsaI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://4okhml2r8f.execute-api.us-east-1.amazonaws.com/dev/paisabank/cards",
+					"protocol": "https",
+					"host": [
+						"4okhml2r8f",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"paisabank",
+						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transactions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "0mlVFqc_+gbw6BfqHhzZsaI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://4okhml2r8f.execute-api.us-east-1.amazonaws.com/dev/paisabank/transactions",
+					"protocol": "https",
+					"host": [
+						"4okhml2r8f",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"paisabank",
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
