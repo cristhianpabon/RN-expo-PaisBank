@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import {
   Image,
   Pressable,
@@ -7,6 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { useSelector, useDispatch } from "react-redux";
 import ButtonPrimary from "../components/ButtonPrimary";
 import FormInput from "../components/FormInput";
@@ -14,8 +14,15 @@ import { COLORS, FONTS } from "../constants/constants";
 
 import type { RootState } from "../redux/store";
 
-export default function LoginScreen() {
+interface LoginScreenProps extends StackScreenProps<any, any> {}
+
+export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const cards = useSelector((state: RootState) => state.cards.value);
+
+  const handleOnPressLoginButton = () => {
+    navigation.navigate("profile");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.loginWidth}>
@@ -58,13 +65,13 @@ export default function LoginScreen() {
           </View>
           <ButtonPrimary
             buttonText={"Ingresar"}
-            handleOnPress={() => console.log("button....")}
+            handleOnPress={handleOnPressLoginButton}
           />
         </View>
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

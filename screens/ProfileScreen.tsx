@@ -1,25 +1,37 @@
-import { StatusBar } from "expo-status-bar";
+import { StackScreenProps } from "@react-navigation/stack";
+import { useEffect } from "react";
 import {
   Image,
   Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import ButtonPrimary from "../components/ButtonPrimary";
 import ButtonService from "../components/ButtonService";
 import ButtonTransaction from "../components/ButtonTransaction";
+import CardItem from "../components/CardItem";
 import { COLORS, FONTS } from "../constants/constants";
 
 import type { RootState } from "../redux/store";
 
-export default function ProfileScreen() {
+interface ProfileScreenProps extends StackScreenProps<any, any> {}
+
+export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const cards = useSelector((state: RootState) => state.cards.value);
+
+  useEffect(() => {
+    navigation.setOptions({ headerShown: false });
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.profileWidth}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.profileWidth}
+      >
         <View style={styles.topNavbar}>
           <View>
             <Text style={styles.topNavbarSubTitle}>Hola</Text>
@@ -40,6 +52,14 @@ export default function ProfileScreen() {
             </Pressable>
           </View>
         </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.profileCards}
+        >
+          <CardItem />
+          <CardItem />
+        </ScrollView>
         <View style={styles.profileServices}>
           <Text style={styles.sectionTitle}>Servicios</Text>
           <View style={styles.profileServicesButtons}>
@@ -77,41 +97,41 @@ export default function ProfileScreen() {
         </View>
         <View>
           <Text style={styles.sectionTitle}>Últimas transacciones</Text>
-            <ButtonTransaction
-              transactionTitle={"Adobe"}
-              transactionDescription={"Pago de suscripción"}
-              transactionAmount={"125"}
-              transactionBackground={COLORS.lightPurple}
-              transactionColor={COLORS.purple}
-              transactionImage={
-                <Image source={require("../assets/img/suscribe.png")} />
-              }
-            />
-            <ButtonTransaction
-              transactionTitle={"Juan David"}
-              transactionDescription={"Pago recibido"}
-              transactionAmount={"95"}
-              transactionBackground={COLORS.lightGreen}
-              transactionColor={COLORS.green}
-              transactionImage={
-                <Image source={require("../assets/img/cashIn.png")} />
-              }
-            />
-            <ButtonTransaction
-              transactionTitle={"Miguel Tanaka"}
-              transactionDescription={"Envio realizado"}
-              transactionAmount={"186"}
-              transactionBackground={COLORS.lightOrange}
-              transactionColor={COLORS.orange}
-              transactionImage={
-                <Image source={require("../assets/img/cashOut.png")} />
-              }
-            />
+          <ButtonTransaction
+            transactionTitle={"Adobe"}
+            transactionDescription={"Pago de suscripción"}
+            transactionAmount={"125"}
+            transactionBackground={COLORS.lightPurple}
+            transactionColor={COLORS.purple}
+            transactionImage={
+              <Image source={require("../assets/img/suscribe.png")} />
+            }
+          />
+          <ButtonTransaction
+            transactionTitle={"Juan David"}
+            transactionDescription={"Pago recibido"}
+            transactionAmount={"95"}
+            transactionBackground={COLORS.lightGreen}
+            transactionColor={COLORS.green}
+            transactionImage={
+              <Image source={require("../assets/img/cashIn.png")} />
+            }
+          />
+          <ButtonTransaction
+            transactionTitle={"Miguel Tanaka"}
+            transactionDescription={"Envio realizado"}
+            transactionAmount={"186"}
+            transactionBackground={COLORS.lightOrange}
+            transactionColor={COLORS.orange}
+            transactionImage={
+              <Image source={require("../assets/img/cashOut.png")} />
+            }
+          />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -157,6 +177,7 @@ const styles = StyleSheet.create({
   topNavbarIcon: {
     marginLeft: 10,
   },
+  profileCards: {},
   profileServices: {},
   profileServicesButtons: {
     flexDirection: "row",

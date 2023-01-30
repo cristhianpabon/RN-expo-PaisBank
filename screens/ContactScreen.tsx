@@ -1,29 +1,30 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  Image,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../redux/store";
 import { COLORS, FONTS } from "../constants/constants";
 
 import ContactItem from "../components/ContactItem";
 import FormSearchInput from "../components/FormSearchInput";
+import { useEffect } from "react";
 
-export default function ContactScreen() {
+interface ContactScreenProps extends StackScreenProps<any, any> {}
+
+export const ContactScreen = ({ navigation }: ContactScreenProps) => {
   const cards = useSelector((state: RootState) => state.cards.value);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.contactWidth}>
           <FormSearchInput
             placeholder={"Ingresa un nombre o un número"}
-            handleOnChangeText={(text)=> console.log(text)}
+            handleOnChangeText={(text) => console.log(text)}
           />
         </View>
         <View style={styles.contacts}>
@@ -63,7 +64,7 @@ export default function ContactScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
