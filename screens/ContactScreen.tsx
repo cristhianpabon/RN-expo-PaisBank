@@ -11,6 +11,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../redux/store";
 import axios from "axios";
+import moment from "moment";
 
 import { COLORS, FONTS } from "../constants/constants";
 import { REACT_APP_CONTACTS_URL, REACT_APP_KEY } from "@env";
@@ -20,12 +21,14 @@ import ContactItem from "../components/ContactItem";
 import FormSearchInput from "../components/FormSearchInput";
 import { useEffect, useState } from "react";
 import { contactType } from "../types/types";
+import ContactList from "../components/ContactList";
 
 interface ContactScreenProps extends StackScreenProps<any, any> {}
 
 export const ContactScreen = ({ navigation }: ContactScreenProps) => {
   const [filter, setFilter] = useState<string>("");
   const [contactsFiltered, setContactsFiltered] = useState<contactType[]>();
+  const [recentContacts, setRecentContacts] = useState<contactType[]>();
   const { logged: isLogged } = useSelector((state: RootState) => state.logged);
   const { contacts } = useSelector((state: RootState) => state.contacts);
   const dispatch = useDispatch();
@@ -52,6 +55,10 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
       });
   };
 
+  const getFormattedDate = () => {
+    return moment().format("YYYY-MM-DD");
+  };
+
   useEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -68,6 +75,14 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
       )
     );
   }, [filter]);
+
+  useEffect(() => {
+    const today = getFormattedDate();
+    const recentContactsValues = contacts.filter(
+      (contact) => contact.addedDate === today
+    );
+    setRecentContacts(recentContactsValues);
+  }, []);
 
   useEffect(() => {
     if (isLogged) {
@@ -96,59 +111,22 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
         </View>
         <View style={styles.contacts}>
           {filter !== "" ? (
-            <>
-              <Text style={[styles.contactsSectionTitle, styles.contactWidth]}>
-                Filter
-              </Text>
-              <View style={styles.contactSeparator}></View>
-              <View style={[styles.contactsList, styles.contactWidth]}>
-                {contactsFiltered &&
-                  contactsFiltered.map((contact) => (
-                    <ContactItem
-                      contactName={contact.name + " " + contact.lastName}
-                      contactNumber={contact.phone}
-                      contactCharacters={
-                        contact.name.charAt(0) + contact.lastName.charAt(0)
-                      }
-                    />
-                  ))}
-              </View>
-            </>
+            contactsFiltered?.length && (
+              <ContactList
+                contactListTitle={"Filter"}
+                contacts={contactsFiltered}
+              />
+            )
           ) : (
             <>
-              {/* <Text style={[styles.contactsSectionTitle, styles.contactWidth]}>
-          Recents
-        </Text>
-        <View style={styles.contactSeparator}></View>
-        <View style={[styles.contactsList, styles.contactWidth]}>
-          <ContactItem
-            contactName={"Belen Salvador"}
-            contactNumber={"+8643307899"}
-            contactCharacters={"BS"}
-          />
-          <ContactItem
-            contactName={"Belen Salvador"}
-            contactNumber={"+8643307899"}
-            contactCharacters={"BS"}
-          />
-        </View> */}
-              <Text style={[styles.contactsSectionTitle, styles.contactWidth]}>
-                All
-              </Text>
-              <View style={styles.contactSeparator}></View>
-              <View style={[styles.contactsList, styles.contactWidth]}>
-                {contacts &&
-                  contacts.map((contact) => (
-                    <ContactItem
-                      key={contact.id}
-                      contactName={contact.name + " " + contact.lastName}
-                      contactNumber={contact.phone}
-                      contactCharacters={
-                        contact.name.charAt(0) + contact.lastName.charAt(0)
-                      }
-                    />
-                  ))}
-              </View>
+              {recentContacts && recentContacts?.length !== 0 && (
+                <ContactList
+                  contactListTitle={"Recents"}
+                  contacts={recentContacts}
+                />
+              )}
+
+              <ContactList contactListTitle={"All"} contacts={contacts} />
             </>
           )}
         </View>
@@ -182,19 +160,4 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   contacts: {},
-  contactsSectionTitle: {
-    fontFamily: FONTS.primary,
-    color: COLORS.greyLabel,
-    fontSize: 16,
-    fontWeight: "400",
-    marginBottom: 16,
-  },
-  contactSeparator: {
-    borderTopWidth: 0.5,
-    borderTopColor: COLORS.greyLine,
-  },
-  contactsList: {
-    paddingTop: 24,
-    paddingBottom: 24,
-  },
 });
