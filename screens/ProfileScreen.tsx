@@ -10,21 +10,119 @@ import {
   View,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../redux/store";
+import axios from "axios";
+
+import { COLORS, FONTS } from "../constants/constants";
+import {
+  REACT_APP_CARDS_URL,
+  REACT_APP_TRANSACTIONS_URL,
+  REACT_APP_KEY,
+} from "@env";
+import { setCards } from "../redux/slices/CardsSlice";
+import { setTransactions } from "../redux/slices/TransactionsSlice";
+
 import ButtonService from "../components/ButtonService";
 import ButtonTransaction from "../components/ButtonTransaction";
 import CardItem from "../components/CardItem";
-import { COLORS, FONTS } from "../constants/constants";
-
-import type { RootState } from "../redux/store";
+import {
+  transactionTypeValues,
+} from "../types/types";
 
 interface ProfileScreenProps extends StackScreenProps<any, any> {}
 
 export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
-  const cards = useSelector((state: RootState) => state.cards.value);
+  const { logged: isLogged } = useSelector((state: RootState) => state.logged);
+  const { cards } = useSelector((state: RootState) => state.cards);
+  const { transactions } = useSelector(
+    (state: RootState) => state.transactions
+  );
+  const dispatch = useDispatch();
+
+  const setTransactionTypeValues = (
+    transactionType: string
+  ): transactionTypeValues => {
+    let currentTransactionType;
+    switch (transactionType) {
+      case "SUS":
+        currentTransactionType = {
+          description: "Pago de suscripción",
+          background: COLORS.lightPurple,
+          color: COLORS.purple,
+          image: <Image source={require("../assets/img/suscribe.png")} />,
+        };
+        break;
+      case "CASH_IN":
+        currentTransactionType = {
+          description: "Pago recibido",
+          background: COLORS.lightGreen,
+          color: COLORS.green,
+          image: <Image source={require("../assets/img/cashIn.png")} />,
+        };
+        break;
+
+      case "CASH_OUT":
+        currentTransactionType = {
+          description: "Envio realizado",
+          background: COLORS.lightOrange,
+          color: COLORS.orange,
+          image: <Image source={require("../assets/img/cashOut.png")} />,
+        };
+        break;
+      default:
+        currentTransactionType = undefined;
+        break;
+    }
+    return currentTransactionType;
+  };
+
+  const getCardsInfo = () => {
+    axios
+      .get(REACT_APP_CARDS_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": REACT_APP_KEY,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(setCards(response.data.data));
+        }
+      })
+      .catch((err) => {
+        console.log("Gatein-Error: ", err.response);
+      });
+  };
+
+  const getTransactionsInfo = () => {
+    axios
+      .get(REACT_APP_TRANSACTIONS_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": REACT_APP_KEY,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(setTransactions(response.data.data));
+        }
+      })
+      .catch((err) => {
+        console.log("Gatein-Error: ", err.response);
+      });
+  };
 
   useEffect(() => {
-    navigation.setOptions({ headerShown: false });
-  }, []);
+    if (isLogged) {
+      getCardsInfo();
+    }
+  }, [isLogged]);
+
+  useEffect(() => {
+    if (isLogged) {
+      getTransactionsInfo();
+    }
+  }, [isLogged]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -57,8 +155,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           showsHorizontalScrollIndicator={false}
           style={styles.profileCards}
         >
-          <CardItem />
-          <CardItem />
+          {cards && cards.map((card) => <CardItem key={card.id} {...card} />)}
         </ScrollView>
         <View style={styles.profileServices}>
           <Text style={styles.sectionTitle}>Servicios</Text>
@@ -97,36 +194,23 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </View>
         <View>
           <Text style={styles.sectionTitle}>Últimas transacciones</Text>
-          <ButtonTransaction
-            transactionTitle={"Adobe"}
-            transactionDescription={"Pago de suscripción"}
-            transactionAmount={"125"}
-            transactionBackground={COLORS.lightPurple}
-            transactionColor={COLORS.purple}
-            transactionImage={
-              <Image source={require("../assets/img/suscribe.png")} />
-            }
-          />
-          <ButtonTransaction
-            transactionTitle={"Juan David"}
-            transactionDescription={"Pago recibido"}
-            transactionAmount={"95"}
-            transactionBackground={COLORS.lightGreen}
-            transactionColor={COLORS.green}
-            transactionImage={
-              <Image source={require("../assets/img/cashIn.png")} />
-            }
-          />
-          <ButtonTransaction
-            transactionTitle={"Miguel Tanaka"}
-            transactionDescription={"Envio realizado"}
-            transactionAmount={"186"}
-            transactionBackground={COLORS.lightOrange}
-            transactionColor={COLORS.orange}
-            transactionImage={
-              <Image source={require("../assets/img/cashOut.png")} />
-            }
-          />
+          {transactions &&
+            transactions.map((transaction) => {
+              const currentTransactionType = setTransactionTypeValues(
+                transaction.transactionType
+              );
+              return (
+                <ButtonTransaction
+                  key={transaction.id}
+                  transactionTitle={transaction.title}
+                  transactionDescription={currentTransactionType?.description}
+                  transactionAmount={transaction.amount}
+                  transactionBackground={currentTransactionType?.background}
+                  transactionColor={currentTransactionType?.color}
+                  transactionImage={currentTransactionType?.image}
+                />
+              );
+            })}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -175,7 +259,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   topNavbarIcon: {
-    marginLeft: 10,
+    marginLeft: 24,
   },
   profileCards: {},
   profileServices: {},

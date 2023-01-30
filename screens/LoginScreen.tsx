@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Image,
   Pressable,
@@ -8,19 +9,54 @@ import {
 } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../redux/store";
+import axios from "axios";
+
+import { setLoggin } from "../redux/slices/LoggedSlice";
+import { COLORS, FONTS } from "../constants/constants";
+import { REACT_APP_LOGIN_URL, REACT_APP_KEY } from "@env";
+
 import ButtonPrimary from "../components/ButtonPrimary";
 import FormInput from "../components/FormInput";
-import { COLORS, FONTS } from "../constants/constants";
-
-import type { RootState } from "../redux/store";
 
 interface LoginScreenProps extends StackScreenProps<any, any> {}
 
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  const cards = useSelector((state: RootState) => state.cards.value);
+  const { logged: isLogged } = useSelector((state: RootState) => state.logged);
+  const [email, setEmail] = useState<string | undefined>();
+  const [password, setPassword] = useState<string | undefined>();
+  const dispatch = useDispatch();
 
   const handleOnPressLoginButton = () => {
-    navigation.navigate("profile");
+    axios
+      .post(
+        REACT_APP_LOGIN_URL,
+        // {
+        //   email: email?.toLocaleLowerCase(),
+        //   password: password,
+        // },
+        {
+          email: "soypaisanx@paisanos.io",
+          password: "PAISANX2023!$",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": REACT_APP_KEY,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setEmail("");
+          setPassword("");
+          dispatch(setLoggin(true));
+          navigation.navigate("profile");
+        }
+      })
+      .catch((err) => {
+        console.log("Error: ", err.message);
+      });
   };
 
   return (
@@ -42,14 +78,16 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
           <FormInput
             type={"text"}
             label={"Email"}
+            value={email}
             placeholder={"Ingresa tu email"}
-            handleOnChangeText={(text: string) => console.log(text)}
+            handleOnChangeText={(text: string) => setEmail(text)}
           />
           <FormInput
             type={"password"}
             label={"Contraseña"}
+            value={password}
             placeholder={"Ingresa tu contraseña"}
-            handleOnChangeText={(text: string) => console.log(text)}
+            handleOnChangeText={(text: string) => setPassword(text)}
           />
           <View style={styles.formCheckbox}>
             <View style={styles.formCheckboxSquare}></View>
