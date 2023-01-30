@@ -31,5 +31,5 @@ export type contactType = {
   name: string;
   lastName: string;
   phone: string;
-  addedDate: number;
+  addedDate: string;
 };
