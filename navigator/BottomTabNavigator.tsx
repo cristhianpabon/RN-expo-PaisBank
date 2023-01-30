@@ -10,6 +10,7 @@ const Tabs = createBottomTabNavigator();
 export const BottomTabNavigator = () => {
   return (
     <Tabs.Navigator
+      initialRouteName="logout"
       screenOptions={{
         tabBarShowLabel: false,
       }}
@@ -21,6 +22,7 @@ export const BottomTabNavigator = () => {
           tabBarIcon: () => (
             <Image source={require("../assets/img/home.png")} />
           ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -37,9 +39,10 @@ export const BottomTabNavigator = () => {
         component={LoginScreen}
         options={{
           tabBarIcon: () => (
-            <Image source={require("../assets/img/logout.png")} />
+              <Image source={require("../assets/img/logout.png")} />
           ),
           tabBarStyle: { display: "none" },
+          headerShown: false,
         }}
       />
     </Tabs.Navigator>
