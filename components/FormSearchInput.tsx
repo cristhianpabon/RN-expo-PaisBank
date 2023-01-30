@@ -40,7 +40,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 20,
     borderRadius: 16,
-    width: '100%'
+    width: "100%",
+    marginBottom: 30,
   },
   searchInputImage: {
     width: 17,
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   inputStyle: {
-    width: '90%',
+    width: "90%",
   },
 });
 

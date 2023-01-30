@@ -5,10 +5,10 @@ import { COLORS, FONTS } from "../constants/constants";
 
 export interface ButtonTransactionProps {
   transactionTitle: string;
-  transactionDescription: string;
+  transactionDescription?: string;
   transactionAmount: string;
-  transactionBackground: string;
-  transactionColor: string;
+  transactionBackground?: string;
+  transactionColor?: string;
   transactionImage: React.ReactNode;
 }
 
