@@ -1,25 +1,25 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { contactType } from "../../types/types";
 
 export interface ContactsState {
-  value: number
+  contacts: contactType[];
 }
 
 const initialState: ContactsState = {
-  value: 0,
-}
+  contacts: [],
+};
 
 export const contactsSlice = createSlice({
-  name: 'contacts',
+  name: "contacts",
   initialState,
   reducers: {
-    getContacts: (state, action: PayloadAction<number>) => {
-      state.value += action.payload
+    setContacts: (state, action: PayloadAction<contactType[]>) => {
+      state.contacts = action.payload;
     },
   },
-})
+});
 
-// Action creators are generated for each case reducer function
-export const { getContacts } = contactsSlice.actions
+export const { setContacts } = contactsSlice.actions;
 
-export default contactsSlice.reducer
+export default contactsSlice.reducer;

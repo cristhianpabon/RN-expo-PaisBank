@@ -1,25 +1,25 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { transactionType } from "../../types/types";
 
 export interface TransactionsState {
-  value: number
+  transactions: transactionType[];
 }
 
 const initialState: TransactionsState = {
-  value: 0,
-}
+  transactions: [],
+};
 
 export const transactionsSlice = createSlice({
-  name: 'transactions',
+  name: "transactions",
   initialState,
   reducers: {
-    getTransactions: (state, action: PayloadAction<number>) => {
-      state.value += action.payload
+    setTransactions: (state, action: PayloadAction<transactionType[]>) => {
+      state.transactions = action.payload;
     },
   },
-})
+});
 
-// Action creators are generated for each case reducer function
-export const { getTransactions } = transactionsSlice.actions
+export const { setTransactions } = transactionsSlice.actions;
 
-export default transactionsSlice.reducer
+export default transactionsSlice.reducer;
