@@ -90,7 +90,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         }
       })
       .catch((err) => {
-        console.log("Gatein-Error: ", err.response);
+        console.log("Error: ", err.response);
       });
   };
 
@@ -108,7 +108,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         }
       })
       .catch((err) => {
-        console.log("Gatein-Error: ", err.response);
+        console.log("Error: ", err.response);
       });
   };
 

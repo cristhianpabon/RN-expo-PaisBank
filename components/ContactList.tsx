@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import { COLORS, FONTS } from "../constants/constants";
 import { contactType } from "../types/types";
@@ -7,33 +7,37 @@ import ContactItem from "./ContactItem";
 
 export interface ContactListProps {
   contactListTitle: string;
-  contacts: contactType[];
+  contacts?: contactType[];
 }
 
 const ContactList: React.FC<ContactListProps> = ({
   contactListTitle,
   contacts,
 }) => {
+  if (contacts && contacts.length === 0) {
+    return null;
+  }
+
   return (
-    <>
+    <View>
       <Text style={[styles.contactsSectionTitle, styles.contactWidth]}>
-        {contactListTitle}
+        {contactListTitle && contactListTitle}
       </Text>
       <View style={styles.contactSeparator}></View>
       <View style={[styles.contactsList, styles.contactWidth]}>
-        {contacts.length &&
+        {contacts &&
           contacts.map((contact) => (
             <ContactItem
               key={contact.id}
-              contactName={contact.name + " " + contact.lastName}
+              contactName={`${contact.name} ${contact.lastName}`}
               contactNumber={contact.phone}
-              contactCharacters={
-                contact.name.charAt(0) + contact.lastName.charAt(0)
-              }
+              contactCharacters={`${contact.name.charAt(
+                0
+              )}${contact.lastName.charAt(0)}`}
             />
           ))}
       </View>
-    </>
+    </View>
   );
 };
 
