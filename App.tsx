@@ -1,13 +1,16 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { store } from "./redux/store";
+import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
-import LoginScreen from "./screens/LoginScreen";
+
+import { BottomTabNavigator } from "./navigator/BottomTabNavigator";
 
 export default function App() {
   return (
     <Provider store={store}>
-      <LoginScreen />
+      <NavigationContainer>
+        <BottomTabNavigator />
+      </NavigationContainer>
     </Provider>
   );
 }
