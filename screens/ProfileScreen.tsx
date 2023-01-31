@@ -22,11 +22,12 @@ import {
 } from "@env";
 import { setCards } from "../redux/slices/CardsSlice";
 import { setTransactions } from "../redux/slices/TransactionsSlice";
+import { transactionTypeValues } from "../types/types";
 
 import ButtonService from "../components/ButtonService";
 import ButtonTransaction from "../components/ButtonTransaction";
 import CardItem from "../components/CardItem";
-import { transactionTypeValues } from "../types/types";
+import AppLoadingIndicator from "../components/AppLoadingIndicator";
 
 interface ProfileScreenProps extends StackScreenProps<any, any> {}
 
@@ -135,38 +136,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   useEffect(() => {
     if (loadingCards || loadingTransactions) {
       setIsToggled(false);
-    } else  {
+    } else {
       setIsToggled(true);
-    } 
+    }
   }, [loadingCards, loadingTransactions]);
 
   if (loadingCards || loadingTransactions) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingIndicator}>
-          <MotiImage
-            style={{
-              width: 50,
-              height: 50,
-            }}
-            from={{
-              rotate: "0deg",
-            }}
-            animate={{
-              rotate: "360deg",
-            }}
-            transition={{
-              loop: true,
-              repeatReverse: false,
-              type: "timing",
-              duration: 500,
-            }}
-            source={require("../assets/img/loading.png")}
-          />
-          <Text style={styles.loadingIndicatorText}>Cargando..</Text>
-        </View>
-      </SafeAreaView>
-    );
+    return <AppLoadingIndicator />;
   }
 
   return (
@@ -371,17 +347,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 30,
-  },
-  loadingIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingIndicatorText: {
-    fontFamily: FONTS.primary,
-    color: COLORS.greyTitle,
-    fontSize: 22,
-    fontWeight: "400",
-    marginBottom: 20,
   },
 });

@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useEffect, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../redux/store";
@@ -17,12 +18,11 @@ import moment from "moment";
 import { COLORS, FONTS } from "../constants/constants";
 import { REACT_APP_CONTACTS_URL, REACT_APP_KEY } from "@env";
 import { setContacts } from "../redux/slices/ContactsSlice";
-
-import ContactItem from "../components/ContactItem";
-import FormSearchInput from "../components/FormSearchInput";
-import { useEffect, useState } from "react";
 import { contactType } from "../types/types";
+
+import FormSearchInput from "../components/FormSearchInput";
 import ContactList from "../components/ContactList";
+import AppLoadingIndicator from "../components/AppLoadingIndicator";
 
 interface ContactScreenProps extends StackScreenProps<any, any> {}
 
@@ -106,31 +106,7 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
   }, [loading]);
 
   if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingIndicator}>
-          <MotiImage
-            style={{
-              width: 50,
-              height: 50,
-            }}
-            from={{
-              rotate: "0deg",
-            }}
-            animate={{
-              rotate: "360deg",
-            }}
-            transition={{
-              loop: true,
-              repeatReverse: false,
-              type: "timing",
-              duration: 500,
-            }}
-            source={require("../assets/img/loading.png")}
-          />
-          <Text style={styles.loadingIndicatorText}>Cargando..</Text>
-        </View>
-      </SafeAreaView>
+    return (<AppLoadingIndicator />
     );
   }
 
@@ -225,16 +201,4 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   contacts: {},
-  loadingIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingIndicatorText: {
-    fontFamily: FONTS.primary,
-    color: COLORS.greyTitle,
-    fontSize: 22,
-    fontWeight: "400",
-    marginBottom: 20,
-  },
 });

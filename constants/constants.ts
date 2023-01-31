@@ -20,5 +20,5 @@ export const COLORS = {
 };
 
 export const FONTS = {
-  primary: "Arial",
+  primary: 'Poppins',
 };

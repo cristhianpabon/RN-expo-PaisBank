@@ -19,6 +19,7 @@ import { REACT_APP_LOGIN_URL, REACT_APP_KEY } from "@env";
 
 import ButtonPrimary from "../components/ButtonPrimary";
 import FormInput from "../components/FormInput";
+import AppLoadingIndicator from "../components/AppLoadingIndicator";
 
 interface LoginScreenProps extends StackScreenProps<any, any> {}
 
@@ -35,14 +36,14 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     axios
       .post(
         REACT_APP_LOGIN_URL,
-        // {
-        //   email: email?.toLocaleLowerCase(),
-        //   password: password,
-        // },
         {
-          email: "soypaisanx@paisanos.io",
-          password: "PAISANX2023!$",
+          email: email?.toLocaleLowerCase(),
+          password: password,
         },
+        // {
+        //   email: "soypaisanx@paisanos.io",
+        //   password: "PAISANX2023!$",
+        // },
         {
           headers: {
             "Content-Type": "application/json",
@@ -70,32 +71,8 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     }, 200);
   }, []);
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingIndicator}>
-          <MotiImage
-            style={{
-              width: 50,
-              height: 50,
-            }}
-            from={{
-              rotate: "0deg",
-            }}
-            animate={{
-              rotate: "360deg",
-            }}
-            transition={{
-              loop: true,
-              repeatReverse: false,
-              type: "timing",
-              duration: 200,
-            }}
-            source={require("../assets/img/loading.png")}
-          />
-          <Text style={styles.loadingIndicatorText}>Cargando..</Text>
-        </View>
-      </SafeAreaView>
+  if (isLoading) {
+    return (<AppLoadingIndicator />
     );
   }
 
@@ -262,17 +239,5 @@ const styles = StyleSheet.create({
     color: COLORS.primaryBlue,
     fontSize: 18,
     fontWeight: "400",
-  },
-  loadingIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingIndicatorText: {
-    fontFamily: FONTS.primary,
-    color: COLORS.greyTitle,
-    fontSize: 22,
-    fontWeight: "400",
-    marginBottom: 20,
   },
 });
