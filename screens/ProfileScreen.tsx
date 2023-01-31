@@ -135,8 +135,10 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   useEffect(() => {
     if (loadingCards || loadingTransactions) {
       setIsToggled(false);
-    }
-  }, [loadingCards,loadingTransactions]);
+    } else  {
+      setIsToggled(true);
+    } 
+  }, [loadingCards, loadingTransactions]);
 
   if (loadingCards || loadingTransactions) {
     return (
@@ -175,13 +177,12 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       >
         <MotiView
           animate={{
-            opacity: isToggled === true ? 1 : 0,
-            scale: isToggled === true ? 1 : 1.5,
+            opacity: isToggled ? 1 : 0,
+            transform: isToggled ? [{ translateY: 0 }] : [{ translateY: 10 }],
           }}
-          transition={{ type: "timing", delay: 0, duration: 300 }}
-          style={{
-            width: "100%",
-            padding: 10,
+          transition={{
+            type: "spring",
+            delay: 250,
           }}
         >
           <View style={styles.topNavbar}>
@@ -204,68 +205,112 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
               </Pressable>
             </View>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.profileCards}
+          <MotiView
+            animate={{
+              opacity: isToggled ? 1 : 0,
+              transform: isToggled
+                ? [{ translateY: 0 }]
+                : [{ translateY: -40 }],
+            }}
+            transition={{
+              type: "spring",
+              delay: 250,
+            }}
           >
-            {cards &&
-              cards.map((card, index) => <CardItem key={card.id} {...card} />)}
-          </ScrollView>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.profileCards}
+            >
+              {cards &&
+                cards.map((card, index) => (
+                  <CardItem key={card.id} {...card} />
+                ))}
+            </ScrollView>
+          </MotiView>
           <View style={styles.profileServices}>
             <Text style={styles.sectionTitle}>Servicios</Text>
-            <View style={styles.profileServicesButtons}>
-              <ButtonService
-                buttonText={"Billetera"}
-                serviceBackground={COLORS.lightGreen}
-                serviceImage={
-                  <Image source={require("../assets/img/wallet.png")} />
-                }
-                handleOnPress={() => console.log("service")}
-              />
-              <ButtonService
-                buttonText={"Transferir"}
-                serviceBackground={COLORS.lightOrange}
-                serviceImage={
-                  <Image source={require("../assets/img/transfer.png")} />
-                }
-                handleOnPress={() => console.log("service")}
-              />
-              <ButtonService
-                buttonText={"Pagar"}
-                serviceBackground={COLORS.lightPurple}
-                serviceImage={
-                  <Image source={require("../assets/img/pay.png")} />
-                }
-                handleOnPress={() => console.log("service")}
-              />
-              <ButtonService
-                buttonText={"Recargar"}
-                serviceBackground={COLORS.lightblue}
-                serviceImage={
-                  <Image source={require("../assets/img/recharge.png")} />
-                }
-                handleOnPress={() => console.log("service")}
-              />
-            </View>
+            <MotiView
+              animate={{
+                opacity: isToggled ? 1 : 0,
+                transform: isToggled
+                  ? [{ translateY: 0 }]
+                  : [{ translateY: -30 }],
+              }}
+              transition={{
+                type: "spring",
+                delay: 250,
+              }}
+            >
+              <View style={styles.profileServicesButtons}>
+                <ButtonService
+                  buttonText={"Billetera"}
+                  serviceBackground={COLORS.lightGreen}
+                  serviceImage={
+                    <Image source={require("../assets/img/wallet.png")} />
+                  }
+                  handleOnPress={() => console.log("service")}
+                />
+                <ButtonService
+                  buttonText={"Transferir"}
+                  serviceBackground={COLORS.lightOrange}
+                  serviceImage={
+                    <Image source={require("../assets/img/transfer.png")} />
+                  }
+                  handleOnPress={() => console.log("service")}
+                />
+                <ButtonService
+                  buttonText={"Pagar"}
+                  serviceBackground={COLORS.lightPurple}
+                  serviceImage={
+                    <Image source={require("../assets/img/pay.png")} />
+                  }
+                  handleOnPress={() => console.log("service")}
+                />
+                <ButtonService
+                  buttonText={"Recargar"}
+                  serviceBackground={COLORS.lightblue}
+                  serviceImage={
+                    <Image source={require("../assets/img/recharge.png")} />
+                  }
+                  handleOnPress={() => console.log("service")}
+                />
+              </View>
+            </MotiView>
           </View>
           <View>
             <Text style={styles.sectionTitle}>Últimas transacciones</Text>
             {transactions &&
-              transactions.map((transaction) => {
+              transactions.map((transaction, index) => {
                 const currentTransactionType = setTransactionTypeValues(
                   transaction.transactionType
                 );
                 return (
-                  <ButtonTransaction
-                    key={transaction.id}
-                    transactionTitle={transaction.title}
-                    transactionDescription={currentTransactionType?.description}
-                    transactionAmount={transaction.amount}
-                    transactionBackground={currentTransactionType?.background}
-                    transactionColor={currentTransactionType?.color}
-                    transactionImage={currentTransactionType?.image}
-                  />
+                  <MotiView
+                    key={index}
+                    animate={{
+                      opacity: isToggled ? 1 : 0,
+                      transform: isToggled
+                        ? [{ translateY: 0 }]
+                        : [{ translateY: 50 }],
+                    }}
+                    transition={{
+                      type: "spring",
+                      delay: index * 500,
+                    }}
+                  >
+                    <ButtonTransaction
+                      key={transaction.id}
+                      transactionTitle={transaction.title}
+                      transactionDescription={
+                        currentTransactionType?.description
+                      }
+                      transactionAmount={transaction.amount}
+                      transactionBackground={currentTransactionType?.background}
+                      transactionColor={currentTransactionType?.color}
+                      transactionImage={currentTransactionType?.image}
+                    />
+                  </MotiView>
                 );
               })}
           </View>

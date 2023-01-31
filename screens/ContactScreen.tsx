@@ -97,6 +97,14 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
     }
   }, [isLogged]);
 
+  useEffect(() => {
+    if (loading) {
+      setIsToggled(false);
+    } else {
+      setIsToggled(true);
+    }
+  }, [loading]);
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -134,10 +142,9 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
             opacity: isToggled === true ? 1 : 0,
             scale: isToggled === true ? 1 : 1.5,
           }}
-          transition={{ type: "timing", delay: 0, duration: 300 }}
+          transition={{ type: "timing", delay: 0, duration: 200 }}
           style={{
             width: "100%",
-            padding: 10,
           }}
         >
           <View style={styles.contactWidth}>
@@ -151,10 +158,21 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
               />
               <Text style={styles.topNavbarText}>Contactos</Text>
             </Pressable>
-            <FormSearchInput
-              placeholder={"Ingresa un nombre o un número"}
-              handleOnChangeText={(text) => setFilter(text)}
-            />
+            <MotiView
+              animate={{
+                opacity: isToggled === true ? 1 : 0,
+                scale: isToggled === true ? 1 : 1.5,
+              }}
+              transition={{ type: "timing", delay: 0, duration: 300 }}
+              style={{
+                width: "100%",
+              }}
+            >
+              <FormSearchInput
+                placeholder={"Ingresa un nombre o un número"}
+                handleOnChangeText={(text) => setFilter(text)}
+              />
+            </MotiView>
           </View>
           <View style={styles.contacts}>
             {filter !== "" ? (
@@ -168,7 +186,11 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
                   contactListTitle={"Recents"}
                   contacts={recentContacts}
                 />
-                <ContactList contactListTitle={"All"} contacts={contacts} />
+                <ContactList
+                  contactListTitle={"All"}
+                  contacts={contacts}
+                  isToggled={isToggled}
+                />
               </View>
             )}
           </View>
