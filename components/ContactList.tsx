@@ -32,10 +32,9 @@ const ContactList: React.FC<ContactListProps> = ({
       <View style={[styles.contactsList, styles.contactWidth]}>
         {contacts &&
           contacts.map((contact, index) => (
-            <>
-              { animation? (
+            <View key={index}>
+              {animation ? (
                 <MotiView
-                  key={index}
                   animate={{
                     opacity: isToggled ? 1 : 0,
                     transform: isToggled
@@ -57,7 +56,7 @@ const ContactList: React.FC<ContactListProps> = ({
                   />
                 </MotiView>
               ) : (
-                <View key={index}>
+                <View>
                   <ContactItem
                     key={contact.id}
                     contactName={`${contact.name} ${contact.lastName}`}
@@ -68,7 +67,7 @@ const ContactList: React.FC<ContactListProps> = ({
                   />
                 </View>
               )}
-            </>
+            </View>
           ))}
       </View>
     </View>
