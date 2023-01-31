@@ -10,6 +10,7 @@ import {
 import { StackScreenProps } from "@react-navigation/stack";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../redux/store";
+import { Image as MotiImage, View as MotiView } from "moti";
 import axios from "axios";
 import moment from "moment";
 
@@ -26,6 +27,8 @@ import ContactList from "../components/ContactList";
 interface ContactScreenProps extends StackScreenProps<any, any> {}
 
 export const ContactScreen = ({ navigation }: ContactScreenProps) => {
+  const [isToggled, setIsToggled] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
   const [contactsFiltered, setContactsFiltered] = useState<contactType[]>();
   const [recentContacts, setRecentContacts] = useState<contactType[]>();
@@ -38,6 +41,7 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
   };
 
   const getContactsInfo = () => {
+    setLoading(true);
     axios
       .get(REACT_APP_CONTACTS_URL, {
         headers: {
@@ -48,10 +52,12 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
       .then((response) => {
         if (response.status === 200) {
           dispatch(setContacts(response.data.data));
+          setLoading(false);
+          setIsToggled(true);
         }
       })
       .catch((err) => {
-        console.log("Gatein-Error: ", err.response);
+        console.log("Error: ", err.response);
       });
   };
 
@@ -66,22 +72,23 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
   }, []);
 
   useEffect(() => {
-    setContactsFiltered(
-      contacts.filter(
-        (contact) =>
-          contact.name.includes(filter) ||
-          contact.lastName.includes(filter) ||
-          contact.phone.includes(filter)
-      )
+    const contactsFiltered = contacts.filter(
+      (contact) =>
+        contact.name.includes(filter) ||
+        contact.lastName.includes(filter) ||
+        contact.phone.includes(filter)
     );
+    setContactsFiltered(contactsFiltered);
   }, [filter]);
 
   useEffect(() => {
     const today = getFormattedDate();
-    const recentContactsValues = contacts.filter(
-      (contact) => contact.addedDate === today
-    );
-    setRecentContacts(recentContactsValues);
+    if (contacts && contacts.length) {
+      const recentContactsValues = contacts.filter(
+        (contact) => contact.addedDate === today
+      );
+      setRecentContacts(recentContactsValues);
+    }
   }, []);
 
   useEffect(() => {
@@ -90,46 +97,82 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
     }
   }, [isLogged]);
 
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingIndicator}>
+          <MotiImage
+            style={{
+              width: 50,
+              height: 50,
+            }}
+            from={{
+              rotate: "0deg",
+            }}
+            animate={{
+              rotate: "360deg",
+            }}
+            transition={{
+              loop: true,
+              repeatReverse: false,
+              type: "timing",
+              duration: 500,
+            }}
+            source={require("../assets/img/loading.png")}
+          />
+          <Text style={styles.loadingIndicatorText}>Cargando..</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={styles.contactWidth}>
-          <Pressable
-            style={styles.topNavbar}
-            onPress={() => handleOnPressBackButton()}
-          >
-            <Image
-              style={styles.topNavbarImage}
-              source={require("../assets/img/back.png")}
+        <MotiView
+          animate={{
+            opacity: isToggled === true ? 1 : 0,
+            scale: isToggled === true ? 1 : 1.5,
+          }}
+          transition={{ type: "timing", delay: 0, duration: 300 }}
+          style={{
+            width: "100%",
+            padding: 10,
+          }}
+        >
+          <View style={styles.contactWidth}>
+            <Pressable
+              style={styles.topNavbar}
+              onPress={() => handleOnPressBackButton()}
+            >
+              <Image
+                style={styles.topNavbarImage}
+                source={require("../assets/img/back.png")}
+              />
+              <Text style={styles.topNavbarText}>Contactos</Text>
+            </Pressable>
+            <FormSearchInput
+              placeholder={"Ingresa un nombre o un número"}
+              handleOnChangeText={(text) => setFilter(text)}
             />
-            <Text style={styles.topNavbarText}>Contactos</Text>
-          </Pressable>
-          <FormSearchInput
-            placeholder={"Ingresa un nombre o un número"}
-            handleOnChangeText={(text) => setFilter(text)}
-          />
-        </View>
-        <View style={styles.contacts}>
-          {filter !== "" ? (
-            contactsFiltered?.length && (
+          </View>
+          <View style={styles.contacts}>
+            {filter !== "" ? (
               <ContactList
                 contactListTitle={"Filter"}
                 contacts={contactsFiltered}
               />
-            )
-          ) : (
-            <>
-              {recentContacts && recentContacts?.length !== 0 && (
+            ) : (
+              <View>
                 <ContactList
                   contactListTitle={"Recents"}
                   contacts={recentContacts}
                 />
-              )}
-
-              <ContactList contactListTitle={"All"} contacts={contacts} />
-            </>
-          )}
-        </View>
+                <ContactList contactListTitle={"All"} contacts={contacts} />
+              </View>
+            )}
+          </View>
+        </MotiView>
       </ScrollView>
     </SafeAreaView>
   );
@@ -160,4 +203,16 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   contacts: {},
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingIndicatorText: {
+    fontFamily: FONTS.primary,
+    color: COLORS.greyTitle,
+    fontSize: 22,
+    fontWeight: "400",
+    marginBottom: 20,
+  },
 });

@@ -1,5 +1,5 @@
 import { StackScreenProps } from "@react-navigation/stack";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../redux/store";
+import { Image as MotiImage, View as MotiView } from "moti";
 import axios from "axios";
 
 import { COLORS, FONTS } from "../constants/constants";
@@ -25,13 +26,15 @@ import { setTransactions } from "../redux/slices/TransactionsSlice";
 import ButtonService from "../components/ButtonService";
 import ButtonTransaction from "../components/ButtonTransaction";
 import CardItem from "../components/CardItem";
-import {
-  transactionTypeValues,
-} from "../types/types";
+import { transactionTypeValues } from "../types/types";
 
 interface ProfileScreenProps extends StackScreenProps<any, any> {}
 
 export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+  const [isToggled, setIsToggled] = useState<boolean>(false);
+  const [loadingCards, setLoadingCards] = useState<boolean>(false);
+  const [loadingTransactions, setLoadingTransactions] =
+    useState<boolean>(false);
   const { logged: isLogged } = useSelector((state: RootState) => state.logged);
   const { cards } = useSelector((state: RootState) => state.cards);
   const { transactions } = useSelector(
@@ -77,6 +80,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   };
 
   const getCardsInfo = () => {
+    setLoadingCards(true);
     axios
       .get(REACT_APP_CARDS_URL, {
         headers: {
@@ -87,6 +91,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       .then((response) => {
         if (response.status === 200) {
           dispatch(setCards(response.data.data));
+          setLoadingCards(false);
         }
       })
       .catch((err) => {
@@ -95,6 +100,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   };
 
   const getTransactionsInfo = () => {
+    setLoadingTransactions(true);
     axios
       .get(REACT_APP_TRANSACTIONS_URL, {
         headers: {
@@ -105,6 +111,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       .then((response) => {
         if (response.status === 200) {
           dispatch(setTransactions(response.data.data));
+          setLoadingTransactions(false);
+          setIsToggled(true);
         }
       })
       .catch((err) => {
@@ -124,94 +132,144 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     }
   }, [isLogged]);
 
+  useEffect(() => {
+    if (loadingCards || loadingTransactions) {
+      setIsToggled(false);
+    }
+  }, [loadingCards,loadingTransactions]);
+
+  if (loadingCards || loadingTransactions) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingIndicator}>
+          <MotiImage
+            style={{
+              width: 50,
+              height: 50,
+            }}
+            from={{
+              rotate: "0deg",
+            }}
+            animate={{
+              rotate: "360deg",
+            }}
+            transition={{
+              loop: true,
+              repeatReverse: false,
+              type: "timing",
+              duration: 500,
+            }}
+            source={require("../assets/img/loading.png")}
+          />
+          <Text style={styles.loadingIndicatorText}>Cargando..</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.profileWidth}
       >
-        <View style={styles.topNavbar}>
-          <View>
-            <Text style={styles.topNavbarSubTitle}>Hola</Text>
-            <Text style={styles.topNavbarTitle}>Paisanx</Text>
-          </View>
-          <View style={styles.topNavbarButton}>
-            <Pressable>
-              <Image
-                style={styles.topNavbarIcon}
-                source={require("../assets/img/search.png")}
-              />
-            </Pressable>
-            <Pressable>
-              <Image
-                style={styles.topNavbarIcon}
-                source={require("../assets/img/bell.png")}
-              />
-            </Pressable>
-          </View>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.profileCards}
+        <MotiView
+          animate={{
+            opacity: isToggled === true ? 1 : 0,
+            scale: isToggled === true ? 1 : 1.5,
+          }}
+          transition={{ type: "timing", delay: 0, duration: 300 }}
+          style={{
+            width: "100%",
+            padding: 10,
+          }}
         >
-          {cards && cards.map((card) => <CardItem key={card.id} {...card} />)}
-        </ScrollView>
-        <View style={styles.profileServices}>
-          <Text style={styles.sectionTitle}>Servicios</Text>
-          <View style={styles.profileServicesButtons}>
-            <ButtonService
-              buttonText={"Billetera"}
-              serviceBackground={COLORS.lightGreen}
-              serviceImage={
-                <Image source={require("../assets/img/wallet.png")} />
-              }
-              handleOnPress={() => console.log("service")}
-            />
-            <ButtonService
-              buttonText={"Transferir"}
-              serviceBackground={COLORS.lightOrange}
-              serviceImage={
-                <Image source={require("../assets/img/transfer.png")} />
-              }
-              handleOnPress={() => console.log("service")}
-            />
-            <ButtonService
-              buttonText={"Pagar"}
-              serviceBackground={COLORS.lightPurple}
-              serviceImage={<Image source={require("../assets/img/pay.png")} />}
-              handleOnPress={() => console.log("service")}
-            />
-            <ButtonService
-              buttonText={"Recargar"}
-              serviceBackground={COLORS.lightblue}
-              serviceImage={
-                <Image source={require("../assets/img/recharge.png")} />
-              }
-              handleOnPress={() => console.log("service")}
-            />
-          </View>
-        </View>
-        <View>
-          <Text style={styles.sectionTitle}>Últimas transacciones</Text>
-          {transactions &&
-            transactions.map((transaction) => {
-              const currentTransactionType = setTransactionTypeValues(
-                transaction.transactionType
-              );
-              return (
-                <ButtonTransaction
-                  key={transaction.id}
-                  transactionTitle={transaction.title}
-                  transactionDescription={currentTransactionType?.description}
-                  transactionAmount={transaction.amount}
-                  transactionBackground={currentTransactionType?.background}
-                  transactionColor={currentTransactionType?.color}
-                  transactionImage={currentTransactionType?.image}
+          <View style={styles.topNavbar}>
+            <View>
+              <Text style={styles.topNavbarSubTitle}>Hola</Text>
+              <Text style={styles.topNavbarTitle}>Paisanx</Text>
+            </View>
+            <View style={styles.topNavbarButton}>
+              <Pressable>
+                <Image
+                  style={styles.topNavbarIcon}
+                  source={require("../assets/img/search.png")}
                 />
-              );
-            })}
-        </View>
+              </Pressable>
+              <Pressable>
+                <Image
+                  style={styles.topNavbarIcon}
+                  source={require("../assets/img/bell.png")}
+                />
+              </Pressable>
+            </View>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.profileCards}
+          >
+            {cards &&
+              cards.map((card, index) => <CardItem key={card.id} {...card} />)}
+          </ScrollView>
+          <View style={styles.profileServices}>
+            <Text style={styles.sectionTitle}>Servicios</Text>
+            <View style={styles.profileServicesButtons}>
+              <ButtonService
+                buttonText={"Billetera"}
+                serviceBackground={COLORS.lightGreen}
+                serviceImage={
+                  <Image source={require("../assets/img/wallet.png")} />
+                }
+                handleOnPress={() => console.log("service")}
+              />
+              <ButtonService
+                buttonText={"Transferir"}
+                serviceBackground={COLORS.lightOrange}
+                serviceImage={
+                  <Image source={require("../assets/img/transfer.png")} />
+                }
+                handleOnPress={() => console.log("service")}
+              />
+              <ButtonService
+                buttonText={"Pagar"}
+                serviceBackground={COLORS.lightPurple}
+                serviceImage={
+                  <Image source={require("../assets/img/pay.png")} />
+                }
+                handleOnPress={() => console.log("service")}
+              />
+              <ButtonService
+                buttonText={"Recargar"}
+                serviceBackground={COLORS.lightblue}
+                serviceImage={
+                  <Image source={require("../assets/img/recharge.png")} />
+                }
+                handleOnPress={() => console.log("service")}
+              />
+            </View>
+          </View>
+          <View>
+            <Text style={styles.sectionTitle}>Últimas transacciones</Text>
+            {transactions &&
+              transactions.map((transaction) => {
+                const currentTransactionType = setTransactionTypeValues(
+                  transaction.transactionType
+                );
+                return (
+                  <ButtonTransaction
+                    key={transaction.id}
+                    transactionTitle={transaction.title}
+                    transactionDescription={currentTransactionType?.description}
+                    transactionAmount={transaction.amount}
+                    transactionBackground={currentTransactionType?.background}
+                    transactionColor={currentTransactionType?.color}
+                    transactionImage={currentTransactionType?.image}
+                  />
+                );
+              })}
+          </View>
+        </MotiView>
       </ScrollView>
     </SafeAreaView>
   );
@@ -268,5 +326,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 30,
+  },
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingIndicatorText: {
+    fontFamily: FONTS.primary,
+    color: COLORS.greyTitle,
+    fontSize: 22,
+    fontWeight: "400",
+    marginBottom: 20,
   },
 });
