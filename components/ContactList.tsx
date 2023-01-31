@@ -10,12 +10,14 @@ export interface ContactListProps {
   contactListTitle: string;
   contacts?: contactType[];
   isToggled?: boolean;
+  animation?: boolean;
 }
 
 const ContactList: React.FC<ContactListProps> = ({
   contactListTitle,
   contacts,
   isToggled,
+  animation,
 }) => {
   if (contacts && contacts.length === 0) {
     return null;
@@ -30,28 +32,43 @@ const ContactList: React.FC<ContactListProps> = ({
       <View style={[styles.contactsList, styles.contactWidth]}>
         {contacts &&
           contacts.map((contact, index) => (
-            <MotiView
-              key={index}
-              animate={{
-                opacity: isToggled ? 1 : 0,
-                transform: isToggled
-                  ? [{ translateY: 0 }]
-                  : [{ translateY: 10 }],
-              }}
-              transition={{
-                type: "spring",
-                delay: index * 250,
-              }}
-            >
-              <ContactItem
-                key={contact.id}
-                contactName={`${contact.name} ${contact.lastName}`}
-                contactNumber={contact.phone}
-                contactCharacters={`${contact.name.charAt(
-                  0
-                )}${contact.lastName.charAt(0)}`}
-              />
-            </MotiView>
+            <>
+              { animation? (
+                <MotiView
+                  key={index}
+                  animate={{
+                    opacity: isToggled ? 1 : 0,
+                    transform: isToggled
+                      ? [{ translateY: 0 }]
+                      : [{ translateY: 10 }],
+                  }}
+                  transition={{
+                    type: "spring",
+                    delay: index * 250,
+                  }}
+                >
+                  <ContactItem
+                    key={contact.id}
+                    contactName={`${contact.name} ${contact.lastName}`}
+                    contactNumber={contact.phone}
+                    contactCharacters={`${contact.name.charAt(
+                      0
+                    )}${contact.lastName.charAt(0)}`}
+                  />
+                </MotiView>
+              ) : (
+                <View key={index}>
+                  <ContactItem
+                    key={contact.id}
+                    contactName={`${contact.name} ${contact.lastName}`}
+                    contactNumber={contact.phone}
+                    contactCharacters={`${contact.name.charAt(
+                      0
+                    )}${contact.lastName.charAt(0)}`}
+                  />
+                </View>
+              )}
+            </>
           ))}
       </View>
     </View>

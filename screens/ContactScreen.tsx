@@ -156,17 +156,20 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
               <ContactList
                 contactListTitle={"Filter"}
                 contacts={contactsFiltered}
+                animation={false}
               />
             ) : (
               <View>
                 <ContactList
                   contactListTitle={"Recents"}
                   contacts={recentContacts}
+                  animation={true}
                 />
                 <ContactList
                   contactListTitle={"All"}
                   contacts={contacts}
                   isToggled={isToggled}
+                  animation={true}
                 />
               </View>
             )}
