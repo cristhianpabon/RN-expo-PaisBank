@@ -38,14 +38,14 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     axios
       .post(
         REACT_APP_LOGIN_URL,
-        // {
-        //   email: email?.toLocaleLowerCase(),
-        //   password: password,
-        // },
         {
-          email: "soypaisanx@paisanos.io",
-          password: "PAISANX2023!$",
+          email: email?.toLocaleLowerCase(),
+          password: password,
         },
+        // {
+        //   email: "soypaisanx@paisanos.io",
+        //   password: "PAISANX2023!$",
+        // },
         {
           headers: {
             "Content-Type": "application/json",
