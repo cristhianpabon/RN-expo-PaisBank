@@ -15,6 +15,7 @@ export type transactionType = {
   amount: string;
   transactionType: string;
   date: string;
+  title: string;
 };
 
 export type transactionTypeValues =
