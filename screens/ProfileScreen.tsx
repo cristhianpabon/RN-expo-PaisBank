@@ -2,9 +2,11 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { useEffect, useState } from "react";
 import {
   Image,
+  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -300,6 +302,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.lightgrey,
+    paddingTop:
+      Platform.OS === "android"
+        ? StatusBar.currentHeight && StatusBar.currentHeight + 30
+        : 0,
   },
   profileWidth: {
     flex: 1,

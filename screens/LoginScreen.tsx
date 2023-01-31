@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   Image,
+  Platform,
   Pressable,
   SafeAreaView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -36,14 +38,14 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     axios
       .post(
         REACT_APP_LOGIN_URL,
-        {
-          email: email?.toLocaleLowerCase(),
-          password: password,
-        },
         // {
-        //   email: "soypaisanx@paisanos.io",
-        //   password: "PAISANX2023!$",
+        //   email: email?.toLocaleLowerCase(),
+        //   password: password,
         // },
+        {
+          email: "soypaisanx@paisanos.io",
+          password: "PAISANX2023!$",
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -62,6 +64,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       })
       .catch((err) => {
         console.log("Error: ", err.message);
+        setLoading(false);
       });
   };
   useEffect(() => {
@@ -72,8 +75,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   }, []);
 
   if (isLoading) {
-    return (<AppLoadingIndicator />
-    );
+    return <AppLoadingIndicator />;
   }
 
   return (
@@ -166,6 +168,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.lightgrey,
+    paddingTop:
+      Platform.OS === "android"
+        ? StatusBar.currentHeight && StatusBar.currentHeight + 30
+        : 0,
   },
   loginWidth: {
     flex: 1,

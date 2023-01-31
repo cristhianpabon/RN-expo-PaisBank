@@ -1,8 +1,10 @@
 import {
   Image,
+  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -106,8 +108,7 @@ export const ContactScreen = ({ navigation }: ContactScreenProps) => {
   }, [loading]);
 
   if (loading) {
-    return (<AppLoadingIndicator />
-    );
+    return <AppLoadingIndicator />;
   }
 
   return (
@@ -180,6 +181,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.lightgrey,
+    paddingTop:
+      Platform.OS === "android"
+        ? StatusBar.currentHeight && StatusBar.currentHeight + 30
+        : 0,
   },
   topNavbar: {
     flexDirection: "row",
